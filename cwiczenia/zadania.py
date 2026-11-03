@@ -1,5 +1,6 @@
 import tkinter as tk
-
+import time
+import sys
 
 class Entity:
     def __init__(self, canvas, x, y, size, color):
@@ -29,9 +30,9 @@ class Entity:
 
 
 
-okno=tk.Tk(baseName="Gra Cwelopodobna")
+okno=tk.Tk(baseName="Gra Lotropodobna")
 tk.Canvas
-okno.title("Gra Cwelopodobna")
+okno.title("Gra Lotropodobna")
 okno.geometry("600x400")
 okno.resizable(False, False)
 okno.configure(background="black")
@@ -48,24 +49,37 @@ def nacisniecie(event):
 def puszczenie(event):
     klawisze[event.keysym] = False
 
-# Podpinamy słuchanie pod okno
+
 okno.bind("<KeyPress>", nacisniecie)
 okno.bind("<KeyRelease>", puszczenie)
 
 def game_loop():
     predkosc = 5
-    
-    # Sprawdzamy klawisze i ruszamy graczem
-    if klawisze.get("w"):
+
+
+    if klawisze.get("w") and klawisze.get("d"):
+        gracz.move(predkosc*0.75, -predkosc*0.75)
+    elif klawisze.get("w") and klawisze.get("a"):
+        gracz.move(-predkosc*0.75, -predkosc*0.75)
+    elif klawisze.get("s") and klawisze.get("d"):
+        gracz.move(predkosc*0.75, predkosc*0.75)
+    elif klawisze.get("s") and klawisze.get("a"):
+        gracz.move(-predkosc * 0.75, predkosc * 0.75)
+    elif klawisze.get("w"):
         gracz.move(0, -predkosc) # w górę (Y maleje)
-    if klawisze.get("s"):
+    elif klawisze.get("s"):
         gracz.move(0, predkosc)  # w dół (Y rośnie)
-    if klawisze.get("a"):
+    elif klawisze.get("a"):
         gracz.move(-predkosc, 0) # w lewo (X maleje)
-    if klawisze.get("d"):
+    elif klawisze.get("d"):
         gracz.move(predkosc, 0)  # w prawo (X rośnie)
 
-    # Wywołaj tę samą funkcję ponownie za 30 milisekund
+    if gracz.x<0 or gracz.x>600 or gracz.y<0 or gracz.y>400:
+        canvas.create_text(300, 200, text="KONIEC GRY", fill='blue')
+        canvas.update()
+        time.sleep(4)
+        sys.exit()
+
     okno.after(30, game_loop)
 game_loop()
 okno.mainloop()
